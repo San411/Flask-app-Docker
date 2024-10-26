@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information Form</title>
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();  
+
+            const student_id = document.getElementById('student_id').value;
+            const first_name = document.getElementById('first_name').value;
+            const last_name = document.getElementById('last_name').value;
+            const module_code = document.getElementById('module_code').value;
+
+            const data = {
+                student_id: student_id,
+                first_name: first_name,
+                last_name: last_name,
+                module_code: module_code
+            };
+
+            // Make the API call
+            const response = await fetch('http://distracted_bhaskara:8080/student/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Student added successfully!');
+                // Optionally, redirect or clear the form
+                window.location.href = "/all";  // Redirect to the /all page after submission
+            } else {
+                alert('Failed to add student');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Student Information Form</h2>
+    
+    <form action="/add" method="post">
+        <label for="student_id">Student ID:</label><br>
+        <input type="text" id="student_id" name="student_id" required><br><br>
+
+        <label for="first_name">First Name:</label><br>
+        <input type="text" id="first_name" name="first_name" required><br><br>
+
+        <label for="last_name">Last Name:</label><br>
+        <input type="text" id="last_name" name="last_name" required><br><br>
+
+        <label for="module_code">Module Code:</label><br>
+        <input type="text" id="module_code" name="module_code" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

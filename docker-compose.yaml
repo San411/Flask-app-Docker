@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres
+    container_name: database
+    restart: always
+    networks:
+      - backend
+    ports:
+      - "5432:5432"  # Map to port 8091 on the host
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Persist the database
+    env_file:
+      - .env
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    depends_on:
+      - database
+    restart: always
+    networks:
+      - backend
+    ports:
+      - "8091:8080"  # Map to port 8091 on the host
+    env_file:
+      - .env
+
+  web-app:
+    build:
+      context: ./web-app  # Specify the build context
+    container_name: web-app
+    depends_on:
+      - database
+      - api
+    networks:
+      - frontend
+    ports:
+      - "8090:5000" 
+    volumes:
+      - ./web-app:/app 
+    env_file:
+      - .env
+
+  api:
+    build:
+      context: ./api  # Specify the build context
+    container_name: api
+    depends_on:
+      - database
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./api:/app  # Attach volume to avoid restarting container on code update
+    env_file:
+      - .env
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db-data:
